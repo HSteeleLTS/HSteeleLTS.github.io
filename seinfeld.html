@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#201b34">
+<meta name="description" content="A random Seinfeld quote at the press of a button.">
+<title>Quote About Nothing</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --ink: #201b34;
+    --paper: #fff1d4;
+    --gold: #ffcb51;
+    --red: #ae281f;
+    font-family: system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100svh;
+    color: var(--paper);
+    background: radial-gradient(#9d8cac36 1px, transparent 1px) 0 0 / 21px 21px, var(--ink);
+    display: grid;
+    place-items: center;
+    padding: clamp(2rem, 7vw, 5rem) clamp(1.35rem, 5vw, 3.5rem);
+  }
+  main { width: min(100%, 57rem); }
+  header { margin-bottom: clamp(1.75rem, 5vw, 3rem); }
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    color: var(--gold);
+    font-size: .88rem;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    margin: 0 0 .8rem;
+  }
+  .kicker::before { content: ""; width: 1.8rem; height: 2px; background: currentColor; }
+  h1 {
+    margin: 0;
+    font: bold clamp(3.1rem, 9vw, 7rem)/.95 Georgia, serif;
+    letter-spacing: -.066em;
+  }
+  h1 em { color: var(--gold); }
+  .quote-card {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    min-height: 19rem;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: .6rem .6rem 0 #8e65c1;
+  }
+  .mark {
+    background: var(--red);
+    color: var(--paper);
+    font: bold 9rem/.9 Georgia, serif;
+    padding-top: 1.65rem;
+    text-align: center;
+    overflow: hidden;
+  }
+  .content {
+    margin: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    justify-content: center;
+    padding: clamp(1.3rem, 5.7vw, 3.5rem);
+  }
+  blockquote {
+    margin: 0;
+    font: bold clamp(1.9rem, 4.9vw, 3.75rem)/1.07 Georgia, serif;
+    letter-spacing: -.045em;
+    overflow-wrap: anywhere;
+  }
+  figcaption {
+    color: #89291e;
+    font-weight: 800;
+    font-size: .9rem;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+  }
+  .actions { margin-top: 2.15rem; }
+  button {
+    appearance: none;
+    min-height: 3.25rem;
+    color: var(--ink);
+    background: var(--gold);
+    padding: .85rem 1.25rem;
+    border: 2px solid var(--gold);
+    font: 800 1rem/1.2 system-ui, sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+  }
+  button:hover { background: var(--ink); color: var(--gold); }
+  button:focus-visible { outline: 2px solid var(--paper); outline-offset: 5px; }
+  button span { font-size: 1.3em; line-height: 1; }
+  @media (max-width: 36rem) {
+    .quote-card { grid-template-columns: 3.5rem 1fr; min-height: 16rem; }
+    .mark { font-size: 4.5rem; padding-top: 1.1rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="kicker">Seinfeld quote generator</p>
+      <h1>Quote About <em>Nothing</em></h1>
+    </header>
+    <div class="quote-card">
+      <div class="mark" aria-hidden="true">“</div>
+      <figure class="content" aria-live="polite" aria-atomic="true">
+        <blockquote id="quote">These pretzels are making me thirsty!</blockquote>
+        <figcaption id="speaker">Cosmo Kramer</figcaption>
+      </figure>
+    </div>
+    <div class="actions">
+      <button type="button" id="next"><span aria-hidden="true">✦</span> New quote</button>
+    </div>
+  </main>
+  <script>
+    const quotes = [
+      { line: "These pretzels are making me thirsty!", speaker: "Cosmo Kramer" },
+      { line: "I was in the pool!", speaker: "George Costanza" },
+      { line: "I don't want to be a pirate!", speaker: "Jerry Seinfeld" },
+      { line: "No soup for you!", speaker: "The Soup Nazi" },
+      { line: "You're killing independent George!", speaker: "George Costanza" },
+      { line: "A Festivus for the rest of us!", speaker: "Frank Costanza" },
+      { line: "Get out!", speaker: "Elaine Benes" },
+      { line: "Serenity now!", speaker: "Frank Costanza" }
+    ];
+
+    const quote = document.querySelector("#quote");
+    const speaker = document.querySelector("#speaker");
+    const next = document.querySelector("#next");
+    let currentIndex = -1;
+    let remaining = [];
+
+    function showQuote() {
+      if (remaining.length === 0) {
+        remaining = quotes.map((_, index) => index);
+      }
+      const candidates = remaining.filter(index => index !== currentIndex);
+      const draw = Math.floor(Math.random() * candidates.length);
+      currentIndex = candidates[draw];
+      remaining.splice(remaining.indexOf(currentIndex), 1);
+      quote.textContent = quotes[currentIndex].line;
+      speaker.textContent = quotes[currentIndex].speaker;
+    }
+
+    next.addEventListener("click", showQuote);
+    showQuote();
+  </script>
+</body>
+</html>
